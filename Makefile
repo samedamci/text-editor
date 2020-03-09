@@ -1,2 +1,2 @@
 all:
-	g++ -lncurses main.cpp -o srano	
+	g++ -lncurses main.cpp -o bin	
