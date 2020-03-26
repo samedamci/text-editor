@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <stdlib.h>
 #include <string.h>
 
 void makeUI() {
@@ -19,29 +20,50 @@ void makeUI() {
   attroff(COLOR_PAIR(1));
 }
 
-void control() {
+void control(WINDOW *win) {
   int ch;
 
   while (true) {
     ch = getch();
+    int y, x;
     refresh();
-
-    if (ch == KEY_F(1)) {
-      break;
+    getyx(win, y, x);
+    
+    switch (ch) {
+    case KEY_F(1):
       endwin();
-    } else if (ch == KEY_F(2)) {
+      exit(0);
+      break;
+    case KEY_F(2):
       clear();
       makeUI();
-      refresh();
-    } else if (ch == KEY_BACKSPACE) {
-      printw("\b \b");
-      refresh();
-    } else
+      break;
+    case KEY_BACKSPACE:
+      wmove(win, y, x - 1);
+      delch();
+      break;
+    case KEY_LEFT:
+      wmove(win, y, x - 1);
+      break;
+    case KEY_RIGHT:
+      wmove(win, y, x + 1);
+      break;
+    case KEY_UP:
+      wmove(win, y - 1, x);
+      break;
+    case KEY_DOWN:
+      wmove(win, y + 1, x);
+      break;
+    default:
       addch(ch);
+    }
+
+    refresh();
+
   }
 }
 
 int main() {
   makeUI();
-  control();
+  control(stdscr);
 }
